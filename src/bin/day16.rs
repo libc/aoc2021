@@ -155,22 +155,27 @@ impl Parser {
 }
 
 fn sum_versions(packets: &Vec<Packet>) -> i64 {
-    packets.iter().map(|p| match p {
-        Packet::Operator { version, subpackets, .. } => {
-            version + sum_versions(subpackets)
-        },
-        Packet::Literal { version, .. }=> {
-            *version
-        }
-    }).sum()
+    packets
+        .iter()
+        .map(|p| match p {
+            Packet::Operator {
+                version,
+                subpackets,
+                ..
+            } => version + sum_versions(subpackets),
+            Packet::Literal { version, .. } => *version,
+        })
+        .sum()
 }
 
 fn eval(packet: &Packet) -> i64 {
     match packet {
-        Packet::Literal { number, .. } => {
-            *number
-        },
-        Packet::Operator { packet_type, subpackets, .. } => {
+        Packet::Literal { number, .. } => *number,
+        Packet::Operator {
+            packet_type,
+            subpackets,
+            ..
+        } => {
             let mut evaled = subpackets.iter().map(|p| eval(p));
 
             match packet_type {
@@ -205,7 +210,7 @@ fn eval(packet: &Packet) -> i64 {
                         0
                     }
                 }
-                _ => panic!("unimplemented")
+                _ => panic!("unimplemented"),
             }
         }
     }
